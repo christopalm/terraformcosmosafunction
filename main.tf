@@ -30,6 +30,10 @@ module "cosmosdbaccount1" {
   cosmosdb_account_location = var.COSMOSDB_ACCOUNT_LOCATION
   location                  = var.LOCATION
   resource_group_name       = var.RESOURCE_GROUP_NAME
+
+  depends_on = [
+    azurerm_resource_group.rg1
+  ]
 }
 
 module "cosmossqldb1" {
@@ -39,6 +43,10 @@ module "cosmossqldb1" {
   cosmosdb_sqldb_name   = var.COSMOSDB_SQLDB_NAME
   resource_group_name   = var.RESOURCE_GROUP_NAME
   max_throughput        = var.COSMOSDB_MAX_THROUGHPUT
+
+  depends_on = [
+    module.cosmosdbaccount1
+  ]
 }
 
 module "sqlcontainer1" {
@@ -49,6 +57,10 @@ module "sqlcontainer1" {
   cosmosdb_account_name = var.COSMOSDB_ACCOUNT_NAME
   cosmosdb_sqldb_name   = var.COSMOSDB_SQLDB_NAME
   max_throughput        = var.COSMOSDB_MAX_THROUGHPUT
+
+  depends_on = [
+    module.cosmossqldb1
+  ]
 }
 
 module "functionapp1" {
@@ -58,4 +70,8 @@ module "functionapp1" {
   cosmosdb_connectionstring = module.cosmosdbaccount1.cosmos_db_connection_string
   location = var.LOCATION
   resource_group_name = var.RESOURCE_GROUP_NAME
+
+  depends_on = [
+    azurerm_resource_group.rg1
+  ]
 }
